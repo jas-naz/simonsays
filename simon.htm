@@ -12,6 +12,8 @@
             height: 400px;
             border-radius: 50%;
             border: solid 1px gray;
+            color: white;
+            background: black;
         }
         .inside {
             margin: 5px;
@@ -52,7 +54,7 @@
             transform: rotate(45deg);
         }
         .blue {
-            background: rgb(20,20,205);
+            background: rgb(0,0,165);
             top: 265px;
             left: 60px;
             -ms-transform: rotate(45deg); /* IE 9 */
@@ -80,17 +82,35 @@
         var simonApp = angular.module('simonApp', []);
         simonApp.controller('myCtrl', function($scope, $timeout) {
 
-            $scope.gameStarted = false;
+            var gameStarted = false;
+            $scope.gameOver = false;
+            $scope.gameStatus = null;
+            var whosTurn = 0;
+
             var sound1 = angular.element(document.querySelector( '#buttonSound1' ) );
 
             $scope.buttonPress = function (button,num) {
-                if ($scope.gameStarted) {
-                    playSound(num);
-                    $scope.lightButton(button);
+                if (gameStarted && whosTurn == 1) {
+                    $timeout.cancel(timer);
+                    buttonPlay(button,num);
+
+                    youSayArray.push(num);
+                    buttonCount += 1;
+                    console.log("buttonCount: " + buttonCount);
+                    if (buttonCount >= playCount) {
+                        youSay(playCount);
+                    }
                 }
             };
 
-            $scope.lightButton = function (lense){
+            var buttonPlay = function (button,num) {
+                if (gameStarted) {
+                    playSound(num);
+                    lightButton(button);
+                }
+            };
+
+            var lightButton = function (lense){
                 var myEl = angular.element( document.querySelector( '.lense.' + lense ) );
                 myEl.addClass("brighten");
             };
@@ -102,6 +122,8 @@
             
             // var audioSource = angular.element(document.querySelector('#buttonSound1'));
             var audio = new Audio("assets/button1.wav");
+            var audioIncorrect = new Audio("assets/incorrect.wav");
+            // var audioCorrect = new Audio("assets/correct.wav");
             function playSound(button) {
                 var btnName = 'sound' + button;
                 // this['sound' + button].play();
@@ -117,82 +139,157 @@
                 audio.addEventListener('timeupdate', function (){
                     if (segmentEnd && audio.currentTime >= segmentEnd) {
                         audio.pause();
-                    }   
-                    console.log(audio.currentTime);
-                }, false);
-                
+                    }                       // console.log(audio.currentTime);
+                }, false); 
             }
             
-            var playCount = 0;
-            var playArray = [1,3,2,2,4,1,2,3,1,4,3,2,4,1];
+            function playWrong() {
+                audioIncorrect.volume = 0.2;
+                audioIncorrect.play();
+            }
+            
+            // function playCorrect() {
+            //     audioCorrect.volume = 0.7;
+            //     audioCorrect.play();
+            // }
+            
             var buttonArray = ['green','red','blue','yellow'];
             var playSpeed = 550;
             var lastButton = null;
-            $scope.simonSays = function(){
+            var timeoutSeconds = 5000;
+            var timer = null;
+
+            var simonSays = function(){
+                if (playCount > 13) {playSpeed = 310;}
+                else if (playCount > 9) {playSpeed = 380;}
+                else if  (playCount > 5) {playSpeed = 450;}
+
+                whosTurn = 0;
+                console.log("My turn");
                 playCount += 1; //Todo: remove this
+                console.log("playCount: " + playCount);
                 var c = 0;
                 var interval = setInterval(function() { 
                     if (c > 0) $scope.removeClass(lastButton);
-                    playAnimator(playArray[c]); 
+                    playAnimator(playArray[c]);
+                    console.log("Button: " + playArray[c]);
                     c++; 
                     if(c >= playCount) {
-                        clearInterval(interval);
                         $timeout(function(){
                             $scope.removeClass(lastButton);
                         }, 555);
+                        whosTurn = 1;
+                        console.log("Your turn");
+ 
+                        timer = $timeout( function(){
+                            gameOver();
+                        }, 4555 );
+                        clearInterval(interval);
                     };
-                }, playSpeed); 
+                }, playSpeed);
+            };
+
+            var youSayArray = [];
+            var youSay = function(playCount) {
+                var correct = true;
+                
+                for (var i=0;i<playCount;i++) {
+                    if (youSayArray[i] != playArray[i]) {
+                       correct = false;
+                    } 
+                }
+
+                if (correct) {
+                    if (playCount >= playArray.length) {
+                        $timeout( function(){
+                            youWin();
+                        }, 2533 );
+                    }
+                    else {
+                        $timeout( function(){
+                            simonSays();
+                            youSayArray = [];
+                            buttonCount = 0;
+                        }, 733 );
+                    }
+                }
+                else {
+                    gameOver();
+                    resetGame();
+                }
+            };
+
+            function getRandomArbitrary(min, max) {
+                return Math.round(Math.random() * (max - min) + min);
+            }
+
+            // Game Control
+            var playCount = 0;
+            var playArray = [1,2,3,4]; // var playArray = [1,1,2,1,4,3]; // Happy Birthday
+            
+            var buttonCount = 0;
+
+            $scope.gameStart = function() {
+                gameStarted = true;
+                // create random array;
+                // for (var n=0;n<15;n++) {
+                //     var tNum = getRandomArbitrary(1, 4);
+                //     // Make sure we don't get three in a row
+                //     if (n > 2) {
+                //         if (tNum == playArray[n-1] && playArray[n-1] == playArray[n-2]) {
+                //             tNum = getRandomArbitrary(1, 4);
+                //         }
+                //     }
+
+                //     playArray.push(tNum);
+                // }
+
+                simonSays();
+            };
+
+            var gameOver = function (){
+                console.log("Game Over");
+                lightButton(buttonArray[0]);
+                lightButton(buttonArray[1]);
+                lightButton(buttonArray[2]);
+                lightButton(buttonArray[3]);
+                playWrong();
+                speed=5000;
+                gameStarted = false;
+                $timeout( function(){
+                    resetGame();
+                }, 2533 );
+            }
+
+            var youWin = function() {
+                console.log("You Win");
+                lightButton(buttonArray[0]);
+                lightButton(buttonArray[1]);
+                lightButton(buttonArray[2]);
+                lightButton(buttonArray[3]);
+                speed=5000;
+                gameStarted = false;
+                $timeout( function(){
+                    resetGame();
+                }, 1533 );
+            };
+
+            var resetGame = function() {
+                playCount = 0;
+                youSayArray = [];
+                buttonCount = 0;
+                buttonArray.map(function(lense){
+                    $scope.removeClass(lense);
+                });
             };
 
             function playAnimator(btn) {
                 var btnColor = buttonArray[btn-1];
-                $scope.buttonPress(btnColor,btn);
+                buttonPlay(btnColor,btn);
                 lastButton = btnColor;
             }
             
         });
-
-        // var sound1 = document.getElementById("buttonSound1");
-        // var sound2 = document.getElementById("buttonSound2");
-        // var sound3 = document.getElementById("buttonSound3");
-        // var sound4 = document.getElementById("buttonSound4");
-        
-        // function buttonPress(button,num) {
-        //     playSound(num);
-        //     lightButton(button);
-        // }
-        
-        // var currentTime = 0;
-        // var segmentEnd = 0.5;
-        // sound1.addEventListener('timeupdate', function (){
-        //     if (segmentEnd && sound1.currentTime >= segmentEnd) {
-        //         sound1.pause();
-        //     }   
-        //     console.log(sound1.currentTime);
-        // }, false);
-        // sound2.addEventListener('timeupdate', function (){
-        //     if (segmentEnd && sound2.currentTime >= segmentEnd) {
-        //         sound2.pause();
-        //     }   
-        //     console.log(sound2.currentTime);
-        // }, false);
-        // sound3.addEventListener('timeupdate', function (){
-        //     if (segmentEnd && sound3.currentTime >= segmentEnd) {
-        //         sound3.pause();
-        //     }   
-        //     console.log(sound3.currentTime);
-        // }, false);
-        // sound4.addEventListener('timeupdate', function (){
-        //     if (segmentEnd && sound4.currentTime >= segmentEnd) {
-        //         sound4.pause();
-        //     }   
-        //     console.log(sound4.currentTime);
-        // }, false);
-        // function playSegment(startTime, endTime){
-        //     segmentEnd = endTime;
-        //     sound1.currentTime = startTime;
-        //     sound1.play();
-        // }
     </script>
 </head>
 <body ng-app="simonApp" ng-controller="myCtrl" >
@@ -211,12 +308,12 @@
                 ng-mousedown="buttonPress('yellow',4);"
                 ng-mouseup="removeClass('yellow')" ng-mouseout="removeClass('yellow')"></div>
             <div class="circle controls"
-                ng-click="gameStarted=true;simonSays();">
+                ng-click="gameStart()">
                 <div class="start">Start</div>
             </div>
 
         </div>
-    </div>
+    </div>    
 
 </body>
 </html>
