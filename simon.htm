@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Simon Says</title>
+    <title>Simon Says: jason.nazario.me</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.1/angular.min.js"></script>
     <style>
         .circle {
@@ -73,11 +73,11 @@
             filter: brightness(2.5);
         }
     </style>
-    <!--<audio id="buttonSound1" src="assets/button1.wav" autostart="false" preload="auto" ></audio>
+    <audio id="buttonSound1" src="assets/button1.wav" autostart="false" preload="auto" ></audio>
     <audio id="buttonSound2" src="assets/button2.wav" autostart="false" preload="auto" ></audio>
     <audio id="buttonSound3" src="assets/button3.wav" autostart="false" preload="auto" ></audio>
     <audio id="buttonSound4" src="assets/button4.wav" autostart="false" preload="auto" ></audio>
-    <audio id="audiosource" src="assets/button4.wav" autostart="false" preload="auto" ></audio>-->
+    <audio id="audiosource" src="assets/incorrect.wav" autostart="false" preload="auto" ></audio>
     <script>
         var simonApp = angular.module('simonApp', []);
         simonApp.controller('myCtrl', function($scope, $timeout) {
@@ -123,14 +123,8 @@
             // var audioSource = angular.element(document.querySelector('#buttonSound1'));
             var audio = new Audio("assets/button1.wav");
             var audioIncorrect = new Audio("assets/incorrect.wav");
-            // var audioCorrect = new Audio("assets/correct.wav");
             function playSound(button) {
                 var btnName = 'sound' + button;
-                // this['sound' + button].play();
-                // this[btnName].play();
-                // var audio = angular.element( document.querySelector( '.lense.' + lense ) );
-                // sound1.play(); // video.play()
-                // var audio = new Audio("assets/button"+button+".wav");
                 audio.src = "assets/button"+button+".wav";
                 audio.play();
 
@@ -139,7 +133,7 @@
                 audio.addEventListener('timeupdate', function (){
                     if (segmentEnd && audio.currentTime >= segmentEnd) {
                         audio.pause();
-                    }                       // console.log(audio.currentTime);
+                    }
                 }, false); 
             }
             
@@ -147,11 +141,6 @@
                 audioIncorrect.volume = 0.2;
                 audioIncorrect.play();
             }
-            
-            // function playCorrect() {
-            //     audioCorrect.volume = 0.7;
-            //     audioCorrect.play();
-            // }
             
             var buttonArray = ['green','red','blue','yellow'];
             var playSpeed = 550;
@@ -203,7 +192,7 @@
                     if (playCount >= playArray.length) {
                         $timeout( function(){
                             youWin();
-                        }, 2533 );
+                        }, 755 );
                     }
                     else {
                         $timeout( function(){
@@ -225,24 +214,26 @@
 
             // Game Control
             var playCount = 0;
-            var playArray = [1,2,3,4]; // var playArray = [1,1,2,1,4,3]; // Happy Birthday
+            var playArray = []; // var playArray = [1,1,2,1,4,3]; // Happy Birthday
             
             var buttonCount = 0;
 
             $scope.gameStart = function() {
                 gameStarted = true;
                 // create random array;
-                // for (var n=0;n<15;n++) {
-                //     var tNum = getRandomArbitrary(1, 4);
-                //     // Make sure we don't get three in a row
-                //     if (n > 2) {
-                //         if (tNum == playArray[n-1] && playArray[n-1] == playArray[n-2]) {
-                //             tNum = getRandomArbitrary(1, 4);
-                //         }
-                //     }
+                playArray = [];
+                
+                for (var n=0;n<15;n++) {
+                    var tNum = getRandomArbitrary(1, 4);
+                    // Make sure we don't get three in a row
+                    if (n > 2) {
+                        if (tNum == playArray[n-1] && playArray[n-1] == playArray[n-2]) {
+                            tNum = getRandomArbitrary(1, 4);
+                        }
+                    }
 
-                //     playArray.push(tNum);
-                // }
+                    playArray.push(tNum);
+                }
 
                 simonSays();
             };
@@ -313,8 +304,8 @@
             </div>
 
         </div>
-    </div>    
-
+    </div>
+    <p>Jason Nazario <a href="http://jason.nazario.me">jason.nazario.me</a></p>
 </body>
 </html>
 
