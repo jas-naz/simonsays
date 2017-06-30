@@ -1,9 +1,14 @@
+Notes:
 Game doesn't allow multiple players
 I set it to go to 15 steps before it is over.
 It doesn't evaluate every press just until you get to the end of a sequence. This should be fixed to evaluate each press at a time.
 I didn't do much with the graphics, just used html, css and javascript
-The audio files needs to be compressed.
+The audio files need to be compressed and change filetypes.
 It doesn't prevent you from pressing the lenses more times than you should
+You press start to start a new game.
+I could have made it so it could be resized, but the elements are just roughly positioned.
+
+Please let me know if you have any questions.
 
 Jason Nazario
 jason.nazario.me
