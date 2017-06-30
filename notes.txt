@@ -8,6 +8,7 @@ It doesn't prevent you from pressing the lenses more times than you should
 You press start to start a new game.
 I could have made it so it could be resized, but the elements are just roughly positioned.
 Still not optimized four touch interaction, (touch places a dark highlight that prevents you from seeing the light highlight of the lense)
+Not working in older IE versions, but does in Edge.
 
 Please let me know if you have any questions.
 
