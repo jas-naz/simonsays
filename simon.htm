@@ -53,16 +53,16 @@
             -webkit-transform: rotate(45deg); /* Chrome, Safari, Opera */
             transform: rotate(45deg);
         }
-        .blue {
-            background: rgb(0,0,165);
+        .yellow {
+            background: rgb(205,205,0);
             top: 265px;
             left: 60px;
             -ms-transform: rotate(45deg); /* IE 9 */
             -webkit-transform: rotate(45deg); /* Chrome, Safari, Opera */
             transform: rotate(45deg);
         }
-        .yellow {
-            background: rgb(205,205,0);
+        .blue {
+            background: rgb(0,0,165);
             top: 265px;
             left: 245px;
             -ms-transform: rotate(-45deg); /* IE 9 */
@@ -141,16 +141,16 @@
                 audioIncorrect.play();
             }
             
-            var buttonArray = ['green','red','blue','yellow'];
-            var playSpeed = 550;
+            var buttonArray = ['green','red','yellow','blue'];
+            var playSpeed = 505;
             var lastButton = null;
             var timeoutSeconds = 5000;
             var timer = null;
 
             var simonSays = function(){
-                if (playCount > 13) {playSpeed = 310;}
-                else if (playCount > 9) {playSpeed = 380;}
-                else if  (playCount > 5) {playSpeed = 450;}
+                if (playCount > 13) {playSpeed = 405;}
+                else if (playCount > 9) {playSpeed = 430;}
+                else if  (playCount > 5) {playSpeed = 460;}
 
                 whosTurn = 0;
                 console.log("My turn");
@@ -291,12 +291,12 @@
             <div class="lense red"
                 ng-mousedown="buttonPress('red',2);"
                 ng-mouseup="removeClass('red')" ng-mouseout="removeClass('red')"></div>
-            <div class="lense blue" 
-                ng-mousedown="buttonPress('blue',3);"
-                ng-mouseup="removeClass('blue')" ng-mouseout="removeClass('blue')"></div>
             <div class="lense yellow"
-                ng-mousedown="buttonPress('yellow',4);"
+                ng-mousedown="buttonPress('yellow',3);"
                 ng-mouseup="removeClass('yellow')" ng-mouseout="removeClass('yellow')"></div>
+            <div class="lense blue" 
+                ng-mousedown="buttonPress('blue',4);"
+                ng-mouseup="removeClass('blue')" ng-mouseout="removeClass('blue')"></div>
             <div class="circle controls"
                 ng-click="gameStart()">
                 <div class="start">Start</div>
